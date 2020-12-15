@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>azurda</title>
+    <link>/</link>
+    <description>Recent content on azurda</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 15 Dec 2020 02:18:48 +0200</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Reading structs with Frida</title>
+      <link>/posts/structs/</link>
+      <pubDate>Tue, 15 Dec 2020 02:18:48 +0200</pubDate>
+      
+      <guid>/posts/structs/</guid>
+      <description>We are able to read function arguments with FRIDA using the args:NativePointer[] array. However, this is not possible with arguments that are not simple types such as structs.
+Where can we find structs? We can find structs in the Unix time libraries for example, or more importantly in Windows&amp;rsquo;s APICALLs such as the ones in NTDLL.
+Stages:
+ Understanding and reading a user-controlled struct. Reading a UNIX syscall structure. Reading a Windows NTDLL structure.</description>
+    </item>
+    
+  </channel>
+</rss>
