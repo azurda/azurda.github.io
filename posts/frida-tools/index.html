@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A simple, minimal blog for those who love text.">
+    <title>Frida Tools | azurda</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="https://azurda.github.io/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="https://azurda.github.io/">~/azurda</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/categories/">~/categories</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/tags/">~/tags</a>
+      </li>
+      
+
+      
+      
+      <li class="pull-right">
+        <a href="/index.xml">~/subscribe</a>
+      </li>
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">Frida Tools</span></h1>
+
+<h2 class="date">2020/12/22</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <p>The <code>frida-tools</code> package offers some CLI tools that we can use for quick binary instrumentation. We can install them by simply running the following command:</p>
+<p><code>pip install frida-tools</code></p>
+<p>We are going to take a look at the most important tools: <code>frida CLI</code> and <code>frida-trace</code></p>
+<h1 id="frida-trace">frida-trace</h1>
+<p>This tool alllows us to instrument processes or apps without the need of writing an instrumentation tool. This tool&rsquo;s funtionality is based on the <code>Interceptor</code> API:</p>
+<ul>
+<li>Instrument running processes or spawn new ones.</li>
+<li>Follow child processes</li>
+<li>Instrument whole libraries: <code>KERNEL32.DLL!*</code> or <code>NTDLL.DLL!*</code></li>
+<li>Instrument specific APIs such as <code>KERNEL32.DLL!CreateFileW</code></li>
+<li>Allows for different ways of working: Via USB (for mobile devices), local and remote.</li>
+</ul>
+<h2 id="basic-usage">Basic usage</h2>
+<p>We have different options when instrumenting processes or binaries in Linux / MacOS / Windows systems:</p>
+<ul>
+<li><code>$ frida trace -f binary.exe</code>: The -f parameter is used to spawn a new process given a binary or a path to the binary we want to instrument.</li>
+<li><code>$ fritda-trace &lt;PID|process_name&gt;</code>: We can instrument an already running process given it&rsquo;s PID or process name. <strong>It&rsquo;s important to know that if two processes share the same process name, frida-trace won&rsquo;t attach to either of them</strong>.</li>
+</ul>
+<p>We can also select between the duktape runtime and the JSV8 runtime with the <code>--runtime</code> flag:</p>
+<p><code>$ frida-trace -runtime=duk 1234</code></p>
+<p><strong>Note</strong>: <code>frida-trace</code>'s parameters are case sensitive so we need to take this into account when using the tool. For example, lowercase parameters are used for functions <em>inclusions</em> and exclusiones hwereas <em>uppercase</em> parameters will be used for modules.</p>
+<h2 id="function-tracing">Function tracing</h2>
+<p>We can trace specific functions thanks to the <code>-i</code> parameter. It&rsquo;s also possible to use the <code>*</code> wildcard to match any function that contains the desired string. It&rsquo;s also possible to specify from which modules we want the function to come from with the <code>-I</code> parameter whereas <code>-X</code> parameter is used for module exclusions.</p>
+<p><code>-I</code> and <code>-X</code> only include module EXPORTS, for module IMPORTS use the <code>-T</code> parameter.</p>
+<ul>
+<li>
+<p><code>$ frida-trace -i &quot;CreateFileW&quot;</code>: Instruments every API call that matches the exact string, without taking into account what module comes from.</p>
+</li>
+<li>
+<p><code>$ frida-trace -i &quot;CreateFileW*</code>: Due to the <code>*</code>, it will match any API call from every module that starts with the string <code>CreateFileW</code>.</p>
+</li>
+<li>
+<p><code>$ frida-trace -i &quot;CreateFileW&quot; -I &quot;KERNEL32.dll</code>: Matches the <code>CreateFileW</code> API from the <code>KERNEL32</code> module.</p>
+</li>
+<li>
+<p><code>$ frida-trace -i &quot;CreateFileW&quot; -X &quot;KERNEL32.dll</code>: Matches the <code>CreateFileW</code> API <em>that are not</em> from the <code>KERNEL32</code> module.</p>
+</li>
+</ul>
+<p>We can repeatedly use these operators to exclude and include multiple functions or modules. Instrumenting calls given <strong>module offsets</strong>  is also possible thanks to the <code>-a</code> parameter:</p>
+<p><code>frida-trace PID -a &quot;customLib.DLL!localPrint&quot;</code></p>
+<h3 id="interesting-modifiers">Interesting modifiers</h3>
+<p>These modifiers are worth remembering:</p>
+<ul>
+<li><code>-q</code>: remove <code>FRIDA</code>'s API call formatting for each instrumented call.</li>
+<li><code>--runtime=duktape/v8</code>: Choose the desired runtime. <code>duktape</code> is recommended for <code>performance</code> and <code>v8</code> recommended for modern JS/TS features and a more in-depth error reporting.</li>
+<li><code>--debug</code>: Opens <code>FRIDA</code>'s debug console</li>
+</ul>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      Happy hacking &gt;:) | <a href="https://github.com/azurda">Github</a> | <a href="https://twitter.com/entdark_">Twitter</a>
+      
+    </footer>
+  </body>
+</html>
+
