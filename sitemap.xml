@@ -3,26 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/</loc>
+    <loc>https://azurda.github.io/</loc>
     <lastmod>2020-12-15T02:18:48+02:00</lastmod>
   </url>
   
   <url>
-    <loc>/posts/</loc>
+    <loc>https://azurda.github.io/posts/</loc>
     <lastmod>2020-12-15T02:18:48+02:00</lastmod>
   </url>
   
   <url>
-    <loc>/posts/structs/</loc>
+    <loc>https://azurda.github.io/posts/structs/</loc>
     <lastmod>2020-12-15T02:18:48+02:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>https://azurda.github.io/categories/</loc>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>https://azurda.github.io/tags/</loc>
   </url>
   
 </urlset>
