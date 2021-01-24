@@ -63,11 +63,13 @@ If you want a more detailed, accurate description of is internals I encourage yo
 <li>Jumps to <code>vmMain()</code> again and again and again.</li>
 </ol>
 <p>Some of these vmMain arguments that can be received:</p>
-<p>GAME_INIT: Game startup
-GAME_SHUTDOWN: Map change or server shutdown.
-GAME_CLIENT_CONNECT: Client, bot or real connects.
-GAME_CLIENT_USERINFO_CHANGED: Client info changes, forcestrings, playermodels, name&hellip; 
-&hellip; and more</p>
+<ul>
+<li>GAME_INIT: Game startup</li>
+<li>GAME_SHUTDOWN: Map change or server shutdown.</li>
+<li>GAME_CLIENT_CONNECT: Client, bot or real connects.</li>
+<li>GAME_CLIENT_USERINFO_CHANGED: Client info changes, forcestrings, playermodels, name&hellip;</li>
+</ul>
+<p>&hellip; and more</p>
 <p>If you want a more detailed list refer to <code>gameExport_t</code> struct in <code>game/g_public.h</code> <a href="https://github.com/jedis/jediacademy/blob/master/codemp/game/g_public.h#L734-L799">https://github.com/jedis/jediacademy/blob/master/codemp/game/g_public.h#L734-L799</a></p>
 <p>Alright, that is enough Q3VM for now&hellip;</p>
 <p>Firsts things first, we want to where the vmMain export is in the original binary (we are using the 2003 bins ;) ), so we will chage for <code>jampgamex86.dll</code>:</p>
