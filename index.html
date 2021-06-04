@@ -41,7 +41,7 @@
 		
 			<article>
 	<h1><a href="https://azurda.github.io/posts/reading-std-string-c&#43;&#43;/">Reading std::string C&#43;&#43;</a></h1>
-	<b><time>52.21.16164 14:52</time></b>
+	<b><time>16.04.2021 14:52</time></b>
 	
 	<div>
 		Something that is very interesting to us is the ability to read strings, however this is not always possible by simply calling FRIDA&rsquo;s readUtf8String/readCString built-ins due to the different ways a string can be represented. For example, Window&rsquo;s UNICODE_STRING is defined in a struct as follows:
@@ -55,7 +55,7 @@ typedef struct _UNICODE_STRING { USHORT Length; USHORT MaximumLength; PWSTR Buff
 		
 			<article>
 	<h1><a href="https://azurda.github.io/posts/proxy-quake-vm-syscalls-frida/">Proxy Quake Vm Syscalls Frida</a></h1>
-	<b><time>49.21.16164 14:49</time></b>
+	<b><time>16.04.2021 14:49</time></b>
 	
 	<div>
 		Tools used: radare2 for disassembly, Frida for instrumentation.
@@ -71,7 +71,7 @@ What we are going to see in this post:
 		
 			<article>
 	<h1><a href="https://azurda.github.io/posts/objective-c-hooking/">Objective C Hooking with FRIDA</a></h1>
-	<b><time>50.21.16161 14:50</time></b>
+	<b><time>16.01.2021 14:50</time></b>
 	
 	<div>
 		We will read a method that has two arguments. For this purpose, we will write a sample program to call [fileManager fileExistsAtPath: isDirectory:].
@@ -87,7 +87,7 @@ int main(int argc, const char * argv[]) { @autoreleasepool { NSString *filepath 
 		
 			<article>
 	<h1><a href="https://azurda.github.io/posts/searchpathw-hook-frida/">Searchpathw Hook Frida</a></h1>
-	<b><time>49.20.16165 14:49</time></b>
+	<b><time>16.05.2020 14:49</time></b>
 	
 	<div>
 		Note: *This is a quick blog post to answer the issue of an user from the FRIDA IRC / telegram channel. *
@@ -102,7 +102,7 @@ DWORD SearchPathW( LPCWSTR lpPath, LPCWSTR lpFileName, LPCWSTR lpExtension, DWOR
 		
 			<article>
 	<h1><a href="https://azurda.github.io/posts/reading-structs-frida/">Reading Structs Frida</a></h1>
-	<b><time>48.20.16164 14:48</time></b>
+	<b><time>16.04.2020 14:48</time></b>
 	
 	<div>
 		We are able to read function arguments with FRIDA using the args:NativePointer[] array. However, this is not possible with arguments that are not simple types such as structs.
