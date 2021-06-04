@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<style type=text/css>body{font-family:monospace;}</style>
-	<title>Proxy QUAKE3 VM calls with Frida</title>
+	<title>Proxy Quake Vm Syscalls Frida</title>
 	
 	
 	<link rel="stylesheet" href="/css/style.css">
@@ -14,14 +14,16 @@
 </head>
 <body>
 	<header>
-	============<br>
-	== <a href="https://azurda.github.io/">azurda</a> ==<br>
-	============
+	===================<br>
+	== <a href="https://azurda.github.io">azurda&#39;s blog</a> ==<br>
+	===================
 	<div style="float: right;">Blog about reverse engineering, game hacking and frida.</div><br>
 	<p>
 	<nav>
 			<a href="/"><b>Start</b></a>.
 			
+			
+			<a href="/posts/"><b>Posts</b></a>.
 			
 			<a href="/categories/"><b>Categories</b></a>.
 			
@@ -35,13 +37,13 @@
 	
 	<main>
 		<article>
-			<h1>Proxy QUAKE3 VM calls with Frida</h1>
-			<b><time>2021-01-23 12:12:12</time></b>
+			<h1>Proxy Quake Vm Syscalls Frida</h1>
+			<b><time>49.21.16164 14:49</time></b>
 		       
 
 			<div>
 				<p>Tools used: <code>radare2</code> for disassembly, <code>Frida</code> for instrumentation.</p>
-<p><strong>Note</strong>: This is post is written from my understanding of the q3vm and is not meant to be a throughout explanation of it. 
+<p><strong>Note</strong>: This is post is written from my understanding of the q3vm and is not meant to be a throughout explanation of it.
 If you want a more detailed, accurate description of is internals I encourage you to read about it in <a href="https://fabiensanglard.net/quake3/qvm.php">Fabien&rsquo;s blog</a>, which helped me fill some gaps.</p>
 <p>What we are going to see in this post:</p>
 <ul>
@@ -221,7 +223,7 @@ num score ping name            lastmsg address               qport rate
   2     0    0 Desann               50                   bot     0 16384
   3     0    0 Reborn               50                   bot     0 16384
   4     0    0 Imperial Sabote      50                   bot     0 16384
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">log</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;./logger&#34;</span>;
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">log</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./logger&#34;</span>;
 
 <span style="color:#75715e">// gameExport_t struct members.
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">GAME_INIT</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
@@ -332,13 +334,15 @@ num score ping name            lastmsg address               qport rate
 		<div>
 			<ul>
 				
-				<li><a href="/posts/q3vm-hook/">Proxy QUAKE3 VM calls with Frida</a></li>
+				<li><a href="/posts/reading-std-string-c&#43;&#43;/">Reading std::string C&#43;&#43;</a></li>
 				
-				<li><a href="/posts/searchpathw/">SearchPathW hook &#43; example code.</a></li>
+				<li><a href="/posts/proxy-quake-vm-syscalls-frida/">Proxy Quake Vm Syscalls Frida</a></li>
 				
-				<li><a href="/posts/frida-tools/">Frida Tools</a></li>
+				<li><a href="/posts/objective-c-hooking/">Objective C Hooking with FRIDA</a></li>
 				
-				<li><a href="/posts/structs/">Reading structs with Frida</a></li>
+				<li><a href="/posts/searchpathw-hook-frida/">Searchpathw Hook Frida</a></li>
+				
+				<li><a href="/posts/reading-structs-frida/">Reading Structs Frida</a></li>
 				
 			</ul>
 		</div>
@@ -347,10 +351,10 @@ num score ping name            lastmsg address               qport rate
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://azurda.github.io/"><b>azurda</b></a>.
+	<p>&copy; 2021 <a href="https://azurda.github.io"><b>azurda&#39;s blog</b></a>.
 	<a href="https://github.com/azurda"><b>Github</b></a>.
-	<a href="https://twitter.com/entdark_"><b>Twitter</b></a>.
-	<a href="#ZgotmplZ"><b>frida IRC</b></a>.
+	<a href="https://twitter.com/@entdark_"><b>Twitter</b></a>.
+	<a href="https://web.libera.chat"><b>Join #azurda-re in libera.chat</b></a>.
 	</p>
 </footer>
 

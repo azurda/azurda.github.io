@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Reading std::string C&#43;&#43;</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	===================<br>
+	== <a href="https://azurda.github.io">azurda&#39;s blog</a> ==<br>
+	===================
+	<div style="float: right;">Blog about reverse engineering, game hacking and frida.</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories/"><b>Categories</b></a>.
+			
+			<a href="/tags/"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Reading std::string C&#43;&#43;</h1>
+			<b><time>52.21.16164 14:52</time></b>
+		       
+
+			<div>
+				<p>Something that is very interesting to us is the ability to read strings, however this is not always possible  by simply calling FRIDA&rsquo;s <code>readUtf8String/readCString</code> built-ins due to the different ways a string can be represented. For example, Window&rsquo;s <code>UNICODE_STRING</code> is defined in a struct as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> _UNICODE_STRING {
+  USHORT Length;
+  USHORT MaximumLength;
+  PWSTR  Buffer;
+} UNICODE_STRING, <span style="color:#f92672">*</span>PUNICODE_STRING;
+</code></pre></div><p>A common string type to parse is a C++ <code>std::string</code>. A similar concept will be seen in <code>Swift.String</code>&rsquo;s datatype later on. For <code>std::string</code>&rsquo;s the LSB (Least Significant Bit) will store 0 if the it is a short string (&lt; 22 bytes) or 1 for long strings. If it is a long string, the pointer to the string we want to get will be stored at two times the <code>Process.pointerSize</code> of the process we are attached to.
+To test this knowledge out and see how to obtain the string, let&rsquo;s see this simple program:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">print_std_string</span>(std<span style="color:#f92672">::</span>string arg_1)
+{
+	std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> arg_1 <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+}
+
+<span style="color:#66d9ef">int</span>
+<span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">void</span>)
+{
+	std<span style="color:#f92672">::</span>string my_string <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;FRIDA is great, you should check it out at frida.re&#34;</span>;
+	print_std_string(my_string);
+	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>This program simply calls the <code>print_std_string(std::string arg_1)</code> function and prints it to screen. This way it is easy to get the <code>std::string</code> parameter and inspect it.
+Once we fire up this program in FRIDA&rsquo;s REPL and run Module.enumerateExportsSync() on our binary we notice that names are mangled, but due to the name we have chosen for the test function we can spot a mangled function named <code>_Z16print_std_stringNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE</code>. This is the function we want to use <code>Interceptor.attach</code> on.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">Interceptor</span>.<span style="color:#a6e22e">attach</span>(<span style="color:#a6e22e">Module</span>.<span style="color:#a6e22e">getExportByName</span>(<span style="color:#66d9ef">null</span>, <span style="color:#e6db74">&#39;_Z16print_std_stringNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE&#39;</span>), {
+	<span style="color:#a6e22e">onEnter</span> (<span style="color:#a6e22e">args</span>) {
+		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">LSB</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">args</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">readU8</span>() <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>;
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;LSB: &#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">LSB</span>);
+		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stdString</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">args</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">Process</span>.<span style="color:#a6e22e">pointerSize</span><span style="color:#f92672">*</span><span style="color:#ae81ff">2</span>).<span style="color:#a6e22e">readPointer</span>().<span style="color:#a6e22e">readUtf8String</span>();
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;std::string: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">stdString</span>);
+	}
+});
+
+</code></pre></div><p>Then, we can run this small script and get the following output:</p>
+<pre><code>LSB: 1
+std::string: FRIDA is great, you should check it out at frida.re
+[Local::a.out]-&gt; Process terminated
+</code></pre><p>It is important to address that this was tested using <code>clang++ 12.0.0</code>, the memory layout may differ within compilers such as GCC which implements unions to store small strings.</p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/posts/reading-std-string-c&#43;&#43;/">Reading std::string C&#43;&#43;</a></li>
+				
+				<li><a href="/posts/proxy-quake-vm-syscalls-frida/">Proxy Quake Vm Syscalls Frida</a></li>
+				
+				<li><a href="/posts/objective-c-hooking/">Objective C Hooking with FRIDA</a></li>
+				
+				<li><a href="/posts/searchpathw-hook-frida/">Searchpathw Hook Frida</a></li>
+				
+				<li><a href="/posts/reading-structs-frida/">Reading Structs Frida</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://azurda.github.io"><b>azurda&#39;s blog</b></a>.
+	<a href="https://github.com/azurda"><b>Github</b></a>.
+	<a href="https://twitter.com/@entdark_"><b>Twitter</b></a>.
+	<a href="https://web.libera.chat"><b>Join #azurda-re in libera.chat</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

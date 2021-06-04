@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on azurda</title>
+    <title>Posts on azurda&#39;s blog</title>
     <link>https://azurda.github.io/posts/</link>
-    <description>Recent content in Posts on azurda</description>
+    <description>Recent content in Posts on azurda&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Jan 2021 12:12:12 +0200</lastBuildDate>
-    
-	<atom:link href="https://azurda.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Fri, 16 Apr 2021 14:52:44 +0200</lastBuildDate><atom:link href="https://azurda.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reading std::string C&#43;&#43;</title>
+      <link>https://azurda.github.io/posts/reading-std-string-c&#43;&#43;/</link>
+      <pubDate>Fri, 16 Apr 2021 14:52:44 +0200</pubDate>
+      
+      <guid>https://azurda.github.io/posts/reading-std-string-c&#43;&#43;/</guid>
+      <description>Something that is very interesting to us is the ability to read strings, however this is not always possible by simply calling FRIDA&amp;rsquo;s readUtf8String/readCString built-ins due to the different ways a string can be represented. For example, Window&amp;rsquo;s UNICODE_STRING is defined in a struct as follows:
+typedef struct _UNICODE_STRING { USHORT Length; USHORT MaximumLength; PWSTR Buffer; } UNICODE_STRING, *PUNICODE_STRING; A common string type to parse is a C++ std::string. A similar concept will be seen in Swift.</description>
+    </item>
     
     <item>
-      <title>Proxy QUAKE3 VM calls with Frida</title>
-      <link>https://azurda.github.io/posts/q3vm-hook/</link>
-      <pubDate>Sat, 23 Jan 2021 12:12:12 +0200</pubDate>
+      <title>Proxy Quake Vm Syscalls Frida</title>
+      <link>https://azurda.github.io/posts/proxy-quake-vm-syscalls-frida/</link>
+      <pubDate>Fri, 16 Apr 2021 14:49:48 +0200</pubDate>
       
-      <guid>https://azurda.github.io/posts/q3vm-hook/</guid>
+      <guid>https://azurda.github.io/posts/proxy-quake-vm-syscalls-frida/</guid>
       <description>Tools used: radare2 for disassembly, Frida for instrumentation.
 Note: This is post is written from my understanding of the q3vm and is not meant to be a throughout explanation of it. If you want a more detailed, accurate description of is internals I encourage you to read about it in Fabien&amp;rsquo;s blog, which helped me fill some gaps.
 What we are going to see in this post:
@@ -24,34 +30,34 @@ What we are going to see in this post:
     </item>
     
     <item>
-      <title>SearchPathW hook &#43; example code.</title>
-      <link>https://azurda.github.io/posts/searchpathw/</link>
-      <pubDate>Fri, 22 Jan 2021 10:18:48 +0200</pubDate>
+      <title>Objective C Hooking with FRIDA</title>
+      <link>https://azurda.github.io/posts/objective-c-hooking/</link>
+      <pubDate>Sat, 16 Jan 2021 14:50:44 +0200</pubDate>
       
-      <guid>https://azurda.github.io/posts/searchpathw/</guid>
-      <description>Note: This is a quick blog post to answer the issue of an user from the FRIDA IRC / telegram channel.
+      <guid>https://azurda.github.io/posts/objective-c-hooking/</guid>
+      <description>We will read a method that has two arguments. For this purpose, we will write a sample program to call [fileManager fileExistsAtPath: isDirectory:].
+  We will also use FRIDA&amp;rsquo;s REPL to get the method pointer differently.
+  Sample code:
+int main(int argc, const char * argv[]) { @autoreleasepool { NSString *filepath = @&amp;#34;/Users/azurda/Desktop/test.c&amp;#34;; NSFileManager *fileManager = [NSFileManager defaultManager]; BOOL res; if ([fileManager fileExistsAtPath:filepath isDirectory:&amp;amp;res]) { NSLog(@&amp;#34;File exists.</description>
+    </item>
+    
+    <item>
+      <title>Searchpathw Hook Frida</title>
+      <link>https://azurda.github.io/posts/searchpathw-hook-frida/</link>
+      <pubDate>Sat, 16 May 2020 14:49:35 +0200</pubDate>
+      
+      <guid>https://azurda.github.io/posts/searchpathw-hook-frida/</guid>
+      <description>Note: *This is a quick blog post to answer the issue of an user from the FRIDA IRC / telegram channel. *
 In this case what we want to do is to hook the SearchPathW WINAPI:
-DWORD SearchPathW( LPCWSTR lpPath, LPCWSTR lpFileName, LPCWSTR lpExtension, DWORD nBufferLength, LPWSTR lpBuffer, LPWSTR *lpFilePart ); In this case, we want to obtain the most meaningul argument which is in this case the second one, lpFileName. It is possible to extract information from the remaining fields if wanted.</description>
+DWORD SearchPathW( LPCWSTR lpPath, LPCWSTR lpFileName, LPCWSTR lpExtension, DWORD nBufferLength, LPWSTR lpBuffer, LPWSTR *lpFilePart ); In this case, we want to obtain the most meaningful argument which is in this case the second one, lpFileName.</description>
     </item>
     
     <item>
-      <title>Frida Tools</title>
-      <link>https://azurda.github.io/posts/frida-tools/</link>
-      <pubDate>Tue, 22 Dec 2020 23:10:36 +0200</pubDate>
+      <title>Reading Structs Frida</title>
+      <link>https://azurda.github.io/posts/reading-structs-frida/</link>
+      <pubDate>Thu, 16 Apr 2020 14:48:37 +0200</pubDate>
       
-      <guid>https://azurda.github.io/posts/frida-tools/</guid>
-      <description>The frida-tools package offers some CLI tools that we can use for quick binary instrumentation. We can install them by simply running the following command:
-pip install frida-tools
-We are going to take a look at the most important tools: frida CLI and frida-trace
-frida-trace This tool alllows us to instrument processes or apps without the need of writing an instrumentation tool. This tool&amp;rsquo;s funtionality is based on the Interceptor API:</description>
-    </item>
-    
-    <item>
-      <title>Reading structs with Frida</title>
-      <link>https://azurda.github.io/posts/structs/</link>
-      <pubDate>Tue, 15 Dec 2020 02:18:48 +0200</pubDate>
-      
-      <guid>https://azurda.github.io/posts/structs/</guid>
+      <guid>https://azurda.github.io/posts/reading-structs-frida/</guid>
       <description>We are able to read function arguments with FRIDA using the args:NativePointer[] array. However, this is not possible with arguments that are not simple types such as structs.
 Where can we find structs? We can find structs in the Unix time libraries for example, or more importantly in Windows&amp;rsquo;s APICALLs such as the ones in NTDLL.
 Stages:

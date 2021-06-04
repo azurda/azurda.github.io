@@ -1,43 +1,30 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://azurda.github.io/</loc>
-    <lastmod>2021-01-23T12:12:12+02:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-04-16T14:52:44+02:00</lastmod>
+  </url><url>
     <loc>https://azurda.github.io/posts/</loc>
-    <lastmod>2021-01-23T12:12:12+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://azurda.github.io/posts/q3vm-hook/</loc>
-    <lastmod>2021-01-23T12:12:12+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://azurda.github.io/posts/searchpathw/</loc>
-    <lastmod>2021-01-22T10:18:48+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://azurda.github.io/posts/frida-tools/</loc>
-    <lastmod>2020-12-22T23:10:36+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://azurda.github.io/posts/structs/</loc>
-    <lastmod>2020-12-15T02:18:48+02:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-04-16T14:52:44+02:00</lastmod>
+  </url><url>
+    <loc>https://azurda.github.io/posts/reading-std-string-c&#43;&#43;/</loc>
+    <lastmod>2021-04-16T14:52:44+02:00</lastmod>
+  </url><url>
+    <loc>https://azurda.github.io/posts/proxy-quake-vm-syscalls-frida/</loc>
+    <lastmod>2021-04-16T14:49:48+02:00</lastmod>
+  </url><url>
+    <loc>https://azurda.github.io/posts/objective-c-hooking/</loc>
+    <lastmod>2021-01-16T14:50:44+02:00</lastmod>
+  </url><url>
+    <loc>https://azurda.github.io/posts/searchpathw-hook-frida/</loc>
+    <lastmod>2020-05-16T14:49:35+02:00</lastmod>
+  </url><url>
+    <loc>https://azurda.github.io/posts/reading-structs-frida/</loc>
+    <lastmod>2020-04-16T14:48:37+02:00</lastmod>
+  </url><url>
     <loc>https://azurda.github.io/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://azurda.github.io/tags/</loc>
   </url>
-  
 </urlset>
