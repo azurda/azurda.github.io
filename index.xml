@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Thu, 10 Jun 2021 14:17:55 +0200</lastBuildDate><atom:link href="https://azurda.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Clang Memory Layout</title>
+      <title>Obtain struct offsets with clang&#39;s memory layout</title>
       <link>https://azurda.github.io/posts/clang-memory-layout/</link>
       <pubDate>Thu, 10 Jun 2021 14:17:55 +0200</pubDate>
       
