@@ -40,6 +40,20 @@
 		
 		
 			<article>
+	<h1><a href="https://azurda.github.io/posts/clang-memory-layout/">Clang Memory Layout</a></h1>
+	<b><time>10.06.2021 14:17</time></b>
+	
+	<div>
+		One of the most interesting things to do when instrumenting binaries with FRIDA is the ability to read structs because these are used by multiple syscalls in different systems, some examples of this usage can be found in the stat API or in Window&rsquo;s GetSystemInfo API: https://docs.microsoft.com/en-us/windows/desktop/api/sysinfoapi/ns-sysinfoapi-system_info
+The hard part of parsing structs with FRIDA is that it is required to manually calculate their offsets which requires taking into account the architecture of the process, datatypes and size of pointers.
+		
+			<a href="https://azurda.github.io/posts/clang-memory-layout/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://azurda.github.io/posts/reading-std-string-c&#43;&#43;/">Reading std::string C&#43;&#43;</a></h1>
 	<b><time>16.04.2021 14:52</time></b>
 	

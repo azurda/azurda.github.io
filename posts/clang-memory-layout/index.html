@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Clang Memory Layout</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	===================<br>
+	== <a href="https://azurda.github.io">azurda&#39;s blog</a> ==<br>
+	===================
+	<div style="float: right;">Blog about reverse engineering, game hacking and frida.</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories/"><b>Categories</b></a>.
+			
+			<a href="/tags/"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Clang Memory Layout</h1>
+			<b><time>10.06.2021 14:17</time></b>
+		       
+
+			<div>
+				<p>One of the most interesting things to do when instrumenting binaries with FRIDA
+is the ability to read structs because these are used by multiple <em>syscalls</em> in
+different systems, some examples of this usage can be found in
+the <a href="https://man7.org/linux/man-pages/man2/lstat.2.html">stat API</a> or in
+Window&rsquo;s GetSystemInfo API: <a href="https://docs.microsoft.com/en-us/windows/desktop/api/sysinfoapi/ns-sysinfoapi-system_info">https://docs.microsoft.com/en-us/windows/desktop/api/sysinfoapi/ns-sysinfoapi-system_info</a></p>
+<p>The hard part of parsing structs with FRIDA is that it is required to
+manually calculate their offsets which requires taking into account
+the architecture of the process, datatypes and size of pointers.</p>
+<p>To make this job easier, <code>clang</code>&rsquo;s memory layout feature is very helpful in
+documented cases.</p>
+<p>For a quick example we will take MSDN&rsquo;s <code>__stat</code> API defined as:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">_stat</span>(
+   <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>path,
+   <span style="color:#66d9ef">struct</span> _stat <span style="color:#f92672">*</span>buffer
+);
+</code></pre></div><p>With clang, we can get the record layout with two steps:</p>
+<p><code>clang -E [-I] test.c &gt; ptest.c</code></p>
+<p>Which will generate a file that can be later used with the <code>-cc1</code> parameter:</p>
+<p><code>clang -cc1 -fdump-record-layouts ptest.c</code></p>
+<p>And generate us the offsets for each struct member:</p>
+<p>
+<figure>
+  <img src="https://i.imgur.com/keFpzPG.png" alt="" />
+</figure>
+
+
+</p>
+<p>In some cases, it is required to add an extra parameter <code>-fms-extensions</code> to enable
+suppor for __declspec attributes:</p>
+<p><code>clang -cc1 -fdump-record-layouts -fmx-extensions ptest.c</code></p>
+<p>With this information, given this layout we can guess that the member <code>st_size</code>
+should be in the offset 20 with a 64bit <code>clang</code>.</p>
+<p>Hopefully, this is helpful for someone who is trying to calculate structs and
+is not interesting in manually doing it.</p>
+<p><a href="https://eli.thegreenplace.net/2012/12/17/dumping-a-c-objects-memory-layout-with-clang">This post</a>
+kudos to this post and clang for being this handy :)</p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/posts/clang-memory-layout/">Clang Memory Layout</a></li>
+				
+				<li><a href="/posts/reading-std-string-c&#43;&#43;/">Reading std::string C&#43;&#43;</a></li>
+				
+				<li><a href="/posts/proxy-quake-vm-syscalls-frida/">Proxy Quake Vm Syscalls Frida</a></li>
+				
+				<li><a href="/posts/objective-c-hooking/">Objective C Hooking with FRIDA</a></li>
+				
+				<li><a href="/posts/searchpathw-hook-frida/">Searchpathw Hook Frida</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://azurda.github.io"><b>azurda&#39;s blog</b></a>.
+	<a href="https://github.com/azurda"><b>Github</b></a>.
+	<a href="https://twitter.com/@entdark_"><b>Twitter</b></a>.
+	<a href="https://web.libera.chat"><b>Join #azurda-re in libera.chat</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>
