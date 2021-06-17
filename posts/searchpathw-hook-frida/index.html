@@ -1,48 +1,56 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<style type=text/css>body{font-family:monospace;}</style>
-	<title>Searchpathw Hook Frida</title>
-	
-	
-	<link rel="stylesheet" href="/css/style.css">
-	
-	
+<html lang="en"><head>
+    <title>AZURDA.386</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#000084" />
+    <link rel="icon" href="https://azurda.github.io/favicon.ico">
+    <link rel="canonical" href="https://azurda.github.io">
+    
+    
 </head>
 <body>
-	<header>
-	===================<br>
-	== <a href="https://azurda.github.io">azurda&#39;s blog</a> ==<br>
-	===================
-	<div style="float: right;">Blog about reverse engineering, game hacking and frida.</div><br>
-	<p>
-	<nav>
-			<a href="/"><b>Start</b></a>.
-			
-			
-			<a href="/posts/"><b>Posts</b></a>.
-			
-			<a href="/categories/"><b>Categories</b></a>.
-			
-			<a href="/tags/"><b>Tags</b></a>.
-			
-	</nav>
-	</p>
-	
-</header>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"></button>
+            <a class="brand" href="https://azurda.github.io">AZURDA.386</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    
+                    
+                        
+                            <li>
+                                <a href="/about/">
+                                    
+                                    <span>About</span>
+                                </a>
+                            </li>
+                        
+                    
+                        
+                            <li>
+                                <a href="/post/">
+                                    
+                                    <span>All posts</span>
+                                </a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav><div id="content" class="container">
 
-	
-	<main>
-		<article>
-			<h1>Searchpathw Hook Frida</h1>
-			<b><time>16.05.2020 14:49</time></b>
-		       
-
-			<div>
-				<p><strong>Note</strong>: *This is a quick blog post to answer the issue of an user from the FRIDA IRC / telegram channel. *</p>
+<div class="row-fluid navmargin">
+    <div class="page-header">
+        <h1>Searchpathw Hook Frida - Sat, May 16, 2020</h1>
+    </div>
+    <p class="lead"></p>
+    <p><strong>Note</strong>: *This is a quick blog post to answer the issue of an user from the FRIDA IRC / telegram channel. *</p>
 <p>In this case what we want to do is to hook the SearchPathW WINAPI:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">DWORD <span style="color:#a6e22e">SearchPathW</span>(
   LPCWSTR lpPath,
@@ -72,13 +80,7 @@
 }
 </code></pre></div><p>We just try to check that the c:/windows path exists. Compile it and lets attach to it:</p>
 <p><code>frida -f searchPathCpp.exe</code></p>
-<p>
-<figure>
-  <img src="https://i.imgur.com/JjXHmAn.png" alt="SearchPathW output" />
-</figure>
-
-
-</p>
+<p><img src="https://i.imgur.com/JjXHmAn.png" alt="SearchPathW output"></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">[Local::searchPathCpp.exe]-&gt; searchPathPtr = Module.getExportByName(<span style="color:#e6db74">&#34;KERNELBASE.DLL&#34;</span>, <span style="color:#e6db74">&#34;SearchPathW&#34;</span>)
 <span style="color:#e6db74">&#34;0x76fc02f0&#34;</span>
 [Local::searchPathCpp.exe]-&gt; Interceptor.attach(searchPathPtr, { onEnter<span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#66d9ef">function</span> (args) { console.log(args[1].readUtf
@@ -110,40 +112,60 @@
 SearchPath retval<span style="color:#960050;background-color:#1e0010">:</span> 11c<span style="color:#960050;background-color:#1e0010">:</span>\windows\
 </code></pre></div><p>And that&rsquo;s it, if you have more questions contact me on Twitter @entdark_</p>
 
-			</div>
-		</article>
-	</main>
-<aside>
-	<div>
-		<div>
-			<h3>LATEST POSTS</h3>
-		</div>
-		<div>
-			<ul>
-				
-				<li><a href="/posts/clang-memory-layout/">Obtain struct offsets with clang&#39;s memory layout</a></li>
-				
-				<li><a href="/posts/reading-std-string-c&#43;&#43;/">Reading std::string C&#43;&#43;</a></li>
-				
-				<li><a href="/posts/proxy-quake-vm-syscalls-frida/">Proxy Quake Vm Syscalls Frida</a></li>
-				
-				<li><a href="/posts/objective-c-hooking/">Objective C Hooking with FRIDA</a></li>
-				
-				<li><a href="/posts/searchpathw-hook-frida/">Searchpathw Hook Frida</a></li>
-				
-			</ul>
-		</div>
-	</div>
-</aside>
+    <h4><a href="https://azurda.github.io">Back to Home</a></h4>
+</div>
 
 
-	<footer>
-	<p>&copy; 2021 <a href="https://azurda.github.io"><b>azurda&#39;s blog</b></a>.
-	<a href="https://github.com/azurda"><b>Github</b></a>.
-	<a href="https://twitter.com/@entdark_"><b>Twitter</b></a>.
-	<a href="https://web.libera.chat"><b>Join #azurda-re in libera.chat</b></a>.
-	</p>
+        </div><footer class="container">
+    <hr class="soften">
+    <p>
+&copy; 
+<a href="https://azurda.github.io" target="_blank">
+    Azurda
+</a>
+<span id="thisyear">2021</span>
+
+    | Azurda&rsquo;s blog.
+
+
+</p>
+    <p class="text-center">
+        <a href="https://facebook.com">Facebook</a> 
+        <a href="https://twitter.com/entdark_">Twitter</a> 
+        <a href="https://linkedin.com">Linkedin</a> 
+        <a href="https://github.com/azurda">GitHub</a> 
+        <a href="https://gitlab.com">GitLab</a>
+    </p>
 </footer>
 
-</body>
-</html>
+</body><link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="/css/bootstrap-responsive.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script src="/js/jquery.js"></script>
+<script src="/js/bootstrap-386.js"></script>
+<script src="/js/bootstrap-transition.js"></script>
+<script src="/js/bootstrap-alert.js"></script>
+<script src="/js/bootstrap-modal.js"></script>
+<script src="/js/bootstrap-dropdown.js"></script>
+<script src="/js/bootstrap-scrollspy.js"></script>
+<script src="/js/bootstrap-tab.js"></script>
+<script src="/js/bootstrap-tooltip.js"></script>
+<script src="/js/bootstrap-popover.js"></script>
+<script src="/js/bootstrap-button.js"></script>
+<script src="/js/bootstrap-collapse.js"></script>
+<script src="/js/bootstrap-carousel.js"></script>
+<script src="/js/bootstrap-typeahead.js"></script>
+<script src="/js/bootstrap-affix.js"></script>
+<script>
+    _386 = { 
+        fastLoad: true ,
+        onePass: false , 
+        speedFactor: 1 
+    };
+
+    
+    function ThisYear() {
+        document.getElementById('thisyear').innerHTML = new Date().getFullYear();
+    };
+</script></html>
