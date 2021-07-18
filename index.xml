@@ -6,7 +6,18 @@
     <description>Recent content on AZURDA.386</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 10 Jun 2021 14:17:55 +0200</lastBuildDate><atom:link href="https://azurda.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 18 Jul 2021 17:09:02 +0200</lastBuildDate><atom:link href="https://azurda.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Parsing HttpSendRequestEx&#39;s LPINTERNET_BUFFERSA struct with FRIDA</title>
+      <link>https://azurda.github.io/posts/lpinternet_buffersa_struct_parse/</link>
+      <pubDate>Sun, 18 Jul 2021 17:09:02 +0200</pubDate>
+      
+      <guid>https://azurda.github.io/posts/lpinternet_buffersa_struct_parse/</guid>
+      <description>This post is about how to read the LPINTERNET_BUFFERSA struct used by the Windows API HttpSendRequestExA. The background behind this post is answering an StackOverflow question  but with a more detailed explanation.
+To perform this example, instead of writing an application I will use Internet Explorer and I will use FRIDA on it. That said, the definition of the struct used in HttpSendRequestExA/W is:
+typedef struct _INTERNET_BUFFERSA { DWORD dwStructSize; struct _INTERNET_BUFFERSA *Next; LPCSTR lpcszHeader; DWORD dwHeadersLength; DWORD dwHeadersTotal; LPVOID lpvBuffer; DWORD dwBufferLength; DWORD dwBufferTotal; DWORD dwOffsetLow; DWORD dwOffsetHigh; } INTERNET_BUFFERSA, *LPINTERNET_BUFFERSA; There are two things to note here, the first one is that the first member is the structure size and the second member of the struct is a pointer to the next one.</description>
+    </item>
+    
     <item>
       <title>Obtain struct offsets with clang&#39;s memory layout</title>
       <link>https://azurda.github.io/posts/clang-memory-layout/</link>

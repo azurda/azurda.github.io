@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <title>AZURDA.386</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#000084" />
+    <link rel="icon" href="https://azurda.github.io/favicon.ico">
+    <link rel="canonical" href="https://azurda.github.io">
+    
+    
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"></button>
+            <a class="brand" href="https://azurda.github.io">AZURDA.386</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    
+                    
+                        
+                            <li>
+                                <a href="/posts/">
+                                    
+                                    <span>All posts</span>
+                                </a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav><div id="content" class="container">
+
+<div class="row-fluid navmargin">
+    <div class="page-header">
+        <h1>Parsing HttpSendRequestEx&#39;s LPINTERNET_BUFFERSA struct with FRIDA - Sun, Jul 18, 2021</h1>
+    </div>
+    <p class="lead"></p>
+    <p>This post is about how to read the <code>LPINTERNET_BUFFERSA</code> struct used by the Windows API HttpSendRequestExA. The background behind this post is answering an <a href="https://stackoverflow.com/questions/58167840/frida-windows-native-app-read-a-structure-exposed-by-wininet-h">StackOverflow question </a> but with a more detailed explanation.</p>
+<p>To perform this example, instead of writing an application I will use <strong>Internet Explorer</strong> and I will use FRIDA on it. That said, the definition of the struct used in HttpSendRequestExA/W is:</p>
+<pre><code>typedef struct _INTERNET_BUFFERSA {
+DWORD                     dwStructSize;
+struct _INTERNET_BUFFERSA *Next;
+LPCSTR                    lpcszHeader;
+DWORD                     dwHeadersLength;
+DWORD                     dwHeadersTotal;
+LPVOID                    lpvBuffer;
+DWORD                     dwBufferLength;
+DWORD                     dwBufferTotal;
+DWORD                     dwOffsetLow;
+DWORD                     dwOffsetHigh;
+} INTERNET_BUFFERSA, *LPINTERNET_BUFFERSA;
+</code></pre><p>There are two things to note here, the first one is that the first member is the structure size and the second member of the struct is a pointer to the next one. A second thing to take into account is that <code>LPCSTR</code> is going to be a <code>LPCWSTR</code> if <code>HttpSendRequestExW</code> is used instead.</p>
+<p>That said, this structure is pretty simple to parse, there is only three tricky members here:</p>
+<ol>
+<li>LPCSTR size varies depending on the <code>Process.pointerSize()</code></li>
+<li>LPVOID size varies depending on the <code>Process.pointerSize()</code></li>
+<li><code>*Next</code> is a pointer to the next structure, so it will also vary depending on the <code>Process.pointerSize()</code></li>
+</ol>
+<p>With this in mind for a 32-bit process where <code>Process.pointerSize=4</code> the offsets are:</p>
+<pre><code>DWORD                     dwStructSize; // 0
+struct _INTERNET_BUFFERSA *Next; // 4
+LPCSTR                    lpcszHeader; // 8
+DWORD                     dwHeadersLength; // 12
+DWORD                     dwHeadersTotal; // 16
+LPVOID                    lpvBuffer; // 20
+DWORD                     dwBufferLength; // 24
+DWORD                     dwBufferTotal; // 28
+DWORD                     dwOffsetLow; // 32
+DWORD                     dwOffsetHigh; // 36
+</code></pre><p>If the calculations are correct, dwStructSize will be 40 for a 32-bit process or <code>0x28</code> in hex. The following script is able to intercept correctly the HttpSendRequestW structure:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">Interceptor</span>.<span style="color:#a6e22e">attach</span>(<span style="color:#a6e22e">Module</span>.<span style="color:#a6e22e">getExportByName</span>(<span style="color:#66d9ef">null</span>, <span style="color:#e6db74">&#34;HttpSendRequestExW&#34;</span>), {
+	<span style="color:#a6e22e">onEnter</span> (<span style="color:#a6e22e">args</span>) {
+		<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">internetBufferStruct</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">args</span>[<span style="color:#ae81ff">1</span>];
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Struct size: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">readPointer</span>());
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;*Next: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">Process</span>.<span style="color:#a6e22e">pointerSize</span>).<span style="color:#a6e22e">readPointer</span>());  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;lpcszHeader: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">Process</span>.<span style="color:#a6e22e">pointerSize</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>).<span style="color:#a6e22e">readPointer</span>());  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;dwHeadersLength: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">12</span>).<span style="color:#a6e22e">readPointer</span>());  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;dwHeadersTotal: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">16</span>).<span style="color:#a6e22e">readPointer</span>());  
+		<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">dwBufferLength</span> <span style="color:#f92672">=</span> parseInt(<span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">24</span>).<span style="color:#a6e22e">readPointer</span>());
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;lpvBuffer: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">Process</span>.<span style="color:#a6e22e">pointerSize</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">5</span>).<span style="color:#a6e22e">readCString</span>(<span style="color:#a6e22e">dwBufferLength</span>));  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;dwBufferLength: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">dwBufferLength</span>);  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;dwBufferTotal: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">28</span>).<span style="color:#a6e22e">readPointer</span>());  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;dwOffsetLow: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">32</span>).<span style="color:#a6e22e">readPointer</span>());  
+		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;dwOffsetHigh: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">internetBufferStruct</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">36</span>).<span style="color:#a6e22e">readPointer</span>());  
+	}
+});
+</code></pre></div><p>And this is the result in a 32-bit process where as predicted the first member <code>dwStructSize</code> is 40(0x28) as predicted:</p>
+<p><img src="https://1.bp.blogspot.com/-CWdQhGeWs_o/YPQo2P1fmfI/AAAAAAABsuc/491lSQG0UqEe8pMuwHlQV0etkTihtP5UACLcBGAsYHQ/s320/Capture.PNG" alt=""></p>
+
+    <h4><a href="https://azurda.github.io">Back to Home</a></h4>
+</div>
+
+
+        </div><footer class="container">
+    <hr class="soften">
+    <p>
+&copy; 
+<a href="https://azurda.github.io" target="_blank">
+    Azurda
+</a>
+<span id="thisyear">2021</span>
+
+    | Azurda&rsquo;s blog.
+
+
+        | Built on <a href="//gohugo.io" target="_blank">Hugo</a>
+
+</p>
+    <p class="text-center">
+        
+        <a href="https://twitter.com/entdark_">Twitter</a> 
+        
+        <a href="https://github.com/azurda">GitHub</a> 
+        
+    </p>
+</footer>
+
+</body><link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="/css/bootstrap-responsive.css">
+<link rel="stylesheet" href="/css/style.css">
+
+<script src="/js/jquery.js"></script>
+<script src="/js/bootstrap-386.js"></script>
+<script src="/js/bootstrap-transition.js"></script>
+<script src="/js/bootstrap-alert.js"></script>
+<script src="/js/bootstrap-modal.js"></script>
+<script src="/js/bootstrap-dropdown.js"></script>
+<script src="/js/bootstrap-scrollspy.js"></script>
+<script src="/js/bootstrap-tab.js"></script>
+<script src="/js/bootstrap-tooltip.js"></script>
+<script src="/js/bootstrap-popover.js"></script>
+<script src="/js/bootstrap-button.js"></script>
+<script src="/js/bootstrap-collapse.js"></script>
+<script src="/js/bootstrap-carousel.js"></script>
+<script src="/js/bootstrap-typeahead.js"></script>
+<script src="/js/bootstrap-affix.js"></script>
+<script>
+    _386 = { 
+        fastLoad: true ,
+        onePass: false , 
+        speedFactor: 1 
+    };
+
+    
+    function ThisYear() {
+        document.getElementById('thisyear').innerHTML = new Date().getFullYear();
+    };
+</script></html>
